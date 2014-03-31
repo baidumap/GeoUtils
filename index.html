@@ -15,7 +15,13 @@
     <link rel="stylesheet" href="stylesheets/ie.css">
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js"></script>
+    <style type="text/css">
+        table{
+            font-size:14px;
+        }
+    </style>
   </head>
   <body>
       <div id="header">
@@ -38,41 +44,402 @@
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
 
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+        <div style="float:left;width:600px;height:500px;border:1px solid gray" id="container"></div>
+        <div style="float:left;width:300px;height:500px;border:1px solid gray" id="control">
+            <table style="width:100%;" >
+                <tr>
+                    <td colspan="2">点与矩形的关系: </td>
+                </tr>
+                <tr>            
+                    <td><input type="button" value="点在矩形内" onclick="ptInRect()" /></td>
+                    <td><input type="button" value="点在矩形外" onclick="ptOutRect()" /></td>
+                </tr>
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">点与圆形的关系: </td>
+                </tr>
+                <tr>            
+                    <td><input type="button" value="点在圆形内" onclick="ptInCircle()" /></td>
+                    <td><input type="button" value="点在圆形外" onclick="ptOutCircle()" /></td>
+                </tr>
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">计算折线长度: </td>
+                </tr>
+                <tr>            
+                    <td><input type="button" value="参数为折线" onclick="computeLenByPolyine()" /></td>
+                    <td><input type="button" value="参数为点数组" onclick="computeLenByArray()" /></td>
+                </tr>
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">计算多边形面积: </td>
+                </tr>
+                <tr>            
+                    <td><input type="button" value="参数为多边形" onclick="computeAreaByPolygon()" /></td>
+                    <td><input type="button" value="参数为点数组" onclick="computeAreaByArray()" /></td>
+                </tr>
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">判断点是否在折线上: </td>
+                </tr>
+                <tr>            
+                    <td><input type="button" value="点在折线上" onclick="ptOnPolyline()" /></td>
+                    <td><input type="button" value="点在折线外" onclick="ptOutPolyline()" /></td>
+                </tr>
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">判断点是否在多边形内: </td>
+                </tr>
+                <tr>            
+                    <td><input type="button" value="点在多边形内" onclick="ptInPolygon()" /></td>
+                    <td><input type="button" value="点在多边形外" onclick="ptOutPolygon()" /></td>
+                </tr>
+            <table>
+        </div>
       </section>
 
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
+  <script type="text/javascript">
+
+  var map = new BMap.Map("container");
+  var pt = new BMap.Point(116.404, 39.915);
+  map.centerAndZoom(pt, 16);
+
+  map.enableScrollWheelZoom();//开启滚动缩放
+  map.enableContinuousZoom();//开启缩放平滑
+
+  //点在矩形内
+  function ptInRect(){    
+      var pt = new BMap.Point(116.404, 39.915);//测试点
+
+      var pt1 = new BMap.Point(116.400, 39.910);//西南脚点
+      var pt2 = new BMap.Point(116.410, 39.920);//东北脚点
+      var bds = new BMap.Bounds(pt1, pt2); //测试Bounds对象
+          
+      var result = BMapLib.GeoUtils.isPointInRect(pt, bds);
+      if(result == true){
+          alert("点在矩形内");
+      } else {
+          alert("点在矩形外")
+      }
+
+      //演示：将点与矩形添加到地图上
+      map.clearOverlays();    
+      var mkr = new BMap.Marker(pt);
+      var pts = [];
+      //bds的四个脚点坐标
+      var leftTop = new BMap.Point(pt1.lng, pt2.lat);
+      var rightTop = new BMap.Point(pt2.lng, pt2.lat);
+      var leftBottom = new BMap.Point(pt1.lng, pt1.lat);
+      var rightBottom = new BMap.Point(pt2.lng, pt1.lat);
+      pts.push(leftTop);
+      pts.push(rightTop);
+      pts.push(rightBottom);
+      pts.push(leftBottom);
+      var rect = new BMap.Polygon(pts);
+      map.addOverlay(mkr);//添加测试点
+      map.addOverlay(rect);//添加测试矩形    
+      
+  }
+
+  //点在矩形外
+  function ptOutRect(){
+      var pt = new BMap.Point(116.398, 39.915);//测试点
+
+      var pt1 = new BMap.Point(116.400, 39.910);//西南脚点
+      var pt2 = new BMap.Point(116.410, 39.920);//东北脚点
+      var bds = new BMap.Bounds(pt1, pt2); //测试Bounds对象
+          
+      var result = BMapLib.GeoUtils.isPointInRect(pt, bds);
+      if(result == true){
+          alert("点在矩形内");
+      } else {
+          alert("点在矩形外")
+      }
+
+      //演示：将点与矩形添加到地图上
+      map.clearOverlays();    
+      var mkr = new BMap.Marker(pt);
+      var pts = [];
+      //bds的四个脚点坐标
+      var leftTop = new BMap.Point(pt1.lng, pt2.lat);
+      var rightTop = new BMap.Point(pt2.lng, pt2.lat);
+      var leftBottom = new BMap.Point(pt1.lng, pt1.lat);
+      var rightBottom = new BMap.Point(pt2.lng, pt1.lat);
+      pts.push(leftTop);
+      pts.push(rightTop);
+      pts.push(rightBottom);
+      pts.push(leftBottom);
+      var rect = new BMap.Polygon(pts);
+      map.addOverlay(mkr);//添加测试点
+      map.addOverlay(rect);//添加测试矩形     
+  }
+
+  //点在圆内
+  function ptInCircle(){
+      var pt = new BMap.Point(116.404, 39.915);//测试点
+      var c = new BMap.Point(116.404, 39.915); //圆心 
+      var circle = new BMap.Circle(c, 500);//测试圆
+          
+      var result = BMapLib.GeoUtils.isPointInCircle(pt, circle);
+      if(result == true){
+          alert("点在圆形内");
+      } else {
+          alert("点在圆形外")
+      }
+
+      //演示：将点与圆形添加到地图上
+      map.clearOverlays();
+      var mkr = new BMap.Marker(pt);
+      map.addOverlay(mkr);
+      map.addOverlay(circle);
+  }
+
+  //点在圆外
+  function ptOutCircle(){
+      var pt = new BMap.Point(116.396, 39.915);//测试点
+      var c = new BMap.Point(116.404, 39.915); //圆心 
+      var circle = new BMap.Circle(c, 500);//测试圆        
+      
+      var result = BMapLib.GeoUtils.isPointInCircle(pt, circle);
+      if(result == true){
+          alert("点在圆形内");
+      } else {
+          alert("点在圆形外")
+      }
+
+      //演示：将点与圆形添加到地图上
+      map.clearOverlays();
+      var mkr = new BMap.Marker(pt);
+      map.addOverlay(mkr);
+      map.addOverlay(circle);
+  }
+
+  //计算长度，参数为折线
+  function computeLenByPolyine(){    
+      var pts = [];
+      var pt1 = new BMap.Point(116.400,39.910);
+      var pt2 = new BMap.Point(116.402,39.912);
+      var pt3 = new BMap.Point(116.403,39.914);
+      var pt4 = new BMap.Point(116.404,39.917);
+      var pt5 = new BMap.Point(116.406,39.918);
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      pts.push(pt4);
+      pts.push(pt5);
+
+      var ply = new BMap.Polyline(pts);    
+      var dis = BMapLib.GeoUtils.getPolylineDistance(ply);
+      alert("共" + dis.toFixed(2) + "米");
+      
+      //演示：将线添加到地图上
+      map.clearOverlays();
+      map.addOverlay(ply);
+  }
+
+  //计算长度，参数为点数组
+  function computeLenByArray(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.400,39.910);
+      var pt2 = new BMap.Point(116.402,39.912);
+      var pt3 = new BMap.Point(116.403,39.914);
+      var pt4 = new BMap.Point(116.404,39.917);
+      var pt5 = new BMap.Point(116.406,39.918);
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      pts.push(pt4);
+      pts.push(pt5);
+          
+      var dis = BMapLib.GeoUtils.getPolylineDistance(pts);
+      alert("共" + dis.toFixed(2) + "米");
+      
+      //演示：将线添加到地图上
+      var ply = new BMap.Polyline(pts, {strokeColor: "red", strokeStyle:"dashed"});
+      map.clearOverlays();
+      map.addOverlay(ply);        
+  }
+
+  //计算面积，参数为多边形
+  function computeAreaByPolygon(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.395, 39.910);
+      var pt2 = new BMap.Point(116.394, 39.918);
+      var pt3 = new BMap.Point(116.396, 39.919);
+      var pt4 = new BMap.Point(116.404, 39.920);
+      var pt5 = new BMap.Point(116.406, 39.913);    
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      pts.push(pt4);
+      pts.push(pt5);    
+
+      var ply = new BMap.Polygon(pts);    
+      var area = BMapLib.GeoUtils.getPolygonArea(ply);
+      alert("共" + area.toFixed(2) + "平方米"); 
+      
+      //演示：将面添加到地图上    
+      map.clearOverlays();
+      map.addOverlay(ply);  
+  }
+
+  //计算面积，参数为数组
+  function computeAreaByArray(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.395, 39.910);
+      var pt2 = new BMap.Point(116.394, 39.918);
+      var pt3 = new BMap.Point(116.396, 39.919);
+      var pt4 = new BMap.Point(116.404, 39.920);
+      var pt5 = new BMap.Point(116.406, 39.913);    
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      pts.push(pt4);
+      pts.push(pt5);
+          
+      var area = BMapLib.GeoUtils.getPolygonArea(pts);
+      alert("共" + area.toFixed(2) + "平方米"); 
+      
+      //演示：将面添加到地图上
+      var ply = new BMap.Polygon(pts, {strokeColor: "red", strokeStyle:"dashed", fillColor:"gray"});    
+      map.clearOverlays();
+      map.addOverlay(ply);          
+  }
+
+  //点在折线上
+  function ptOnPolyline(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.395, 39.910);
+      var pt2 = new BMap.Point(116.405, 39.920);
+      var pt3 = new BMap.Point(116.410, 39.920);
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      var ply = new BMap.Polyline(pts);
+      
+      var pt = new BMap.Point(116.400, 39.915);    
+      
+      var result = BMapLib.GeoUtils.isPointOnPolyline(pt, ply);
+      if(result == true){
+          alert("点在折线上");
+      } else {
+          alert("点在折线外")
+      }
+      
+      map.clearOverlays();
+      var mkr = new BMap.Marker(pt);    
+      map.addOverlay(mkr);    
+      map.addOverlay(ply);   
+  }
+
+  //点在折线外
+  function ptOutPolyline(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.395, 39.910);
+      var pt2 = new BMap.Point(116.405, 39.920);
+      var pt3 = new BMap.Point(116.410, 39.920);
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      var ply = new BMap.Polyline(pts);
+      
+      var pt = new BMap.Point(116.401, 39.915);    
+      
+      var result = BMapLib.GeoUtils.isPointOnPolyline(pt, ply);
+      if(result == true){
+          alert("点在折线上");
+      } else {
+          alert("点在折线外")
+      }
+      
+      map.clearOverlays();
+      var mkr = new BMap.Marker(pt);    
+      map.addOverlay(mkr);    
+      map.addOverlay(ply);   
+  }
+
+  //点在多边形内
+  function ptInPolygon(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.395, 39.910);
+      var pt2 = new BMap.Point(116.394, 39.914);
+      var pt3 = new BMap.Point(116.403, 39.920);
+      var pt4 = new BMap.Point(116.402, 39.914);
+      var pt5 = new BMap.Point(116.410, 39.913);    
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      pts.push(pt4);
+      pts.push(pt5);  
+      var ply = new BMap.Polygon(pts);
+      
+      var pt =new BMap.Point(116.400, 39.914);
+      
+      var result = BMapLib.GeoUtils.isPointInPolygon(pt, ply);
+      if(result == true){
+          alert("点在多边形内");
+      } else {
+          alert("点在多边形外")
+      } 
+      
+      //演示：将面添加到地图上    
+      map.clearOverlays();
+      var mkr = new BMap.Marker(pt);
+      map.addOverlay(mkr);
+      map.addOverlay(ply);      
+  }
+
+  //点在多边形外
+  function ptOutPolygon(){
+      var pts = [];
+      var pt1 = new BMap.Point(116.395, 39.910);
+      var pt2 = new BMap.Point(116.394, 39.914);
+      var pt3 = new BMap.Point(116.396, 39.919);
+      var pt4 = new BMap.Point(116.406, 39.920);
+      var pt5 = new BMap.Point(116.410, 39.913);    
+      
+      pts.push(pt1);
+      pts.push(pt2);
+      pts.push(pt3);
+      pts.push(pt4);
+      pts.push(pt5);  
+      var ply = new BMap.Polygon(pts);
+      
+      var pt =new BMap.Point(116.410, 39.915);
+      
+      var result = BMapLib.GeoUtils.isPointInPolygon(pt, ply);
+      if(result == true){
+          alert("点在多边形内");
+      } else {
+          alert("点在多边形外")
+      } 
+      
+      //演示：将面添加到地图上    
+      map.clearOverlays();
+      var mkr = new BMap.Marker(pt);
+      map.addOverlay(mkr);
+      map.addOverlay(ply); 
+  }
+  </script>
 </html>
